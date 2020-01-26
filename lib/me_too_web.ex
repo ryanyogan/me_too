@@ -23,6 +23,7 @@ defmodule MeTooWeb do
 
       import Plug.Conn
       import MeTooWeb.Gettext
+      import Phoenix.LiveView.Controller
       alias MeTooWeb.Router.Helpers, as: Routes
     end
   end
@@ -41,6 +42,7 @@ defmodule MeTooWeb do
 
       import MeTooWeb.ErrorHelpers
       import MeTooWeb.Gettext
+      import Phoenix.LiveView.Helpers
       alias MeTooWeb.Router.Helpers, as: Routes
     end
   end
@@ -50,6 +52,7 @@ defmodule MeTooWeb do
       use Phoenix.Router
       import Plug.Conn
       import Phoenix.Controller
+      import Phoenix.LiveView.Router
     end
   end
 
