@@ -92,6 +92,18 @@ defmodule MeTooWeb.DashboardLive do
     {:noreply, assign(socket, :conversation_changeset, new_changeset)}
   end
 
+  def handle_event("restore_state", %{"form_data" => form_data}, socket) do
+    decoded_form_data = Plug.Conn.Query.decode(form_data)
+
+    %{assigns: %{conversation_changeset: changeset}} = socket
+
+    restored_changeset =
+      changeset
+      |> Conversation.changeset(decoded_form_data["conversation"])
+
+    {:noreply, assign(socket, :conversation_changeset, restored_changeset)}
+  end
+
   defp build_title(changeset, contacts) do
     user_ids = Enum.map(changeset.changes.conversation_members, & &1.changes.user_id)
 
