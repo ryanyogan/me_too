@@ -18,5 +18,8 @@ defmodule MeTooWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+
+    live "/conversations/:conversation_id/users/:user_id",
+         ConversationLive
   end
 end
