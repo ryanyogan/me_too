@@ -35,5 +35,9 @@ defmodule MeTooWeb.Endpoint do
     key: "_me_too_key",
     signing_salt: "Gd9sf5eg"
 
+  plug Pow.Plug.Session,
+    otp_app: :me_too,
+    cache_store_backend: Pow.Store.Backend.MnesiaCache
+
   plug MeTooWeb.Router
 end

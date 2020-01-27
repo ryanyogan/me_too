@@ -16,6 +16,11 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
+config :me_too, :pow,
+  user: MeToo.Auth.User,
+  repo: MeToo.Repo,
+  web_module: MeTooWeb
+
 config :phoenix, :json_library, Jason
 
 import_config "#{Mix.env()}.exs"
