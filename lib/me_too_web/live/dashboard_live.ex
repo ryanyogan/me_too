@@ -15,6 +15,8 @@ defmodule MeTooWeb.DashboardLive do
   end
 
   def mount(_params, %{"current_user" => current_user}, socket) do
+    MeTooWeb.Endpoint.subscribe("user_conversations_#{current_user.id}")
+
     {:ok,
      socket
      |> assign(current_user: current_user)
@@ -28,32 +30,26 @@ defmodule MeTooWeb.DashboardLive do
         %{
           assigns: %{
             conversation_changeset: changeset,
-            current_user: current_user,
             contacts: contacts
           }
         } = socket
       ) do
-    conversation_form =
-      Map.put(
-        conversation_form,
-        "title",
-        if(conversation_form["title"] == "",
-          do: build_title(changeset, contacts),
-          else: conversation_form["title"]
-        )
-      )
+    title =
+      if conversation_form["title"] == "" do
+        build_title(changeset, contacts)
+      else
+        conversation_form["title"]
+      end
+
+    conversation_form = Map.put(conversation_form, "title", title)
 
     case Chat.create_conversation(conversation_form) do
       {:ok, _} ->
-        {:noreply,
-         assign(
-           socket,
-           :current_user,
-           Repo.preload(current_user, :conversations, force: true)
-         )}
+        {:noreply, socket}
 
       {:error, err} ->
         Logger.error(inspect(err))
+        {:noreply, socket}
     end
   end
 
@@ -102,6 +98,19 @@ defmodule MeTooWeb.DashboardLive do
       |> Conversation.changeset(decoded_form_data["conversation"])
 
     {:noreply, assign(socket, :conversation_changeset, restored_changeset)}
+  end
+
+  def handle_info(%{event: "new_conversation", payload: new_conversation}, socket) do
+    user = socket.assigns[:current_user]
+    annotated_conversation = new_conversation |> Map.put(:notify, true)
+
+    user = %{
+      user
+      | conversations:
+          (user.conversations |> Enum.map(&Map.delete(&1, :notify))) ++ [annotated_conversation]
+    }
+
+    {:noreply, assign(socket, :current_user, user)}
   end
 
   defp build_title(changeset, contacts) do

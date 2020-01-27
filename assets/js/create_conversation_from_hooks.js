@@ -18,8 +18,8 @@ const CreateConversationFormHooks = {
     console.log("Destroyed", this);
   },
 
-  updated() {
-    console.log("Updated", this);
+  disconnected() {
+    console.log("Disconnected", this);
   }
 };
 

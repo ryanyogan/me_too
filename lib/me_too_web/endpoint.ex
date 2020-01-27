@@ -15,7 +15,7 @@ defmodule MeTooWeb.Endpoint do
 
   if code_reloading? do
     socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
-    # plug Phoenix.LiveReloader
+    plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
   end
 
